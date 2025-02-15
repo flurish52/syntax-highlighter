@@ -8,7 +8,7 @@ import { ZiggyVue } from '../../vendor/tightenco/ziggy';
 import 'prismjs/themes/prism-tomorrow.css';
 
 
-const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
+const appName = import.meta.env.VITE_APP_NAME || 'Syntax-Highlighter';
 
 createInertiaApp({
     title: (title) => `${title} - ${appName}`,

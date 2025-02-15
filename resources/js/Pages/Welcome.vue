@@ -13,9 +13,11 @@
                 <pre
                     ref="codeContainer"
                     class="rounded-lg w-full h-full ml-2 flex flex-col bg-gray-900">
-                    <TitleBar/>
-                    <code class="language-javascript w-fit p-3 bg-gray-900"
-                      v-html="Prism.highlight(code, Prism.languages.javascript, )"></code>
+                    <TitleBar
+                     @languageSelected="handleLanguageSelection"
+                    />
+                    <code :class="[language, 'w-fit p-3 bg-gray-900']"
+                      v-html="Prism.highlight(code, Prism.languages.css, codelang)"></code>
                 </pre>
 
         </div>
@@ -50,14 +52,29 @@ import html2canvas from "html2canvas";
 const code = ref('');
 let codeContainer = ref('');
 
+let codelang = ref('')
+let language = ref('language-'+codelang)
+let valueSelected  = ref();
+
+
+let prism = ref(Prism.languages.css)
 const updateHighlight = () => {
     setTimeout(() => {
         Prism.highlightAll();
     }, 100);
 };
 
+const handleLanguageSelection = (selectedValue) => {
+    language.value = 'language-'+selectedValue;
+    codelang.value = selectedValue;
+    valueSelected.value = selectedValue;
+    console.log(selectedValue)
+
+    prism.value = 'Prism.languages.'+codelang.value
+    updateHighlight()
+};
 const saveAsImage = () => {
-    if (code.value !== '') {
+    if (code.value !== '' && valueSelected.value !== '' ) {
         html2canvas(codeContainer.value, {backgroundColor: null}).then((canvas) => {
             const link = document.createElement("a");
             link.href = canvas.toDataURL("image/png");
@@ -65,6 +82,7 @@ const saveAsImage = () => {
             link.click();
         });
     } else {
+        console.log(valueSelected.value)
         alert('nothing to download')
         return
     }
