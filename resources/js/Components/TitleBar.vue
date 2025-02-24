@@ -1,277 +1,40 @@
-<script setup>
-import { ref } from 'vue';
-import { X, Square, Minus } from 'lucide-vue-next';
-const oldLanguages = [
-    { name: "Markup", alias: "markup" },
-    { name: "CSS", alias: "css" },
-    { name: "C-like", alias: "clike" },
-    { name: "JavaScript", alias: "javascript" },
-    { name: "ABAP", alias: "abap" },
-    { name: "ABNF", alias: "abnf" },
-    { name: "ActionScript", alias: "actionscript" },
-    { name: "Ada", alias: "ada" },
-    { name: "Agda", alias: "agda" },
-    { name: "AL", alias: "al" },
-    { name: "ANTLR4", alias: "antlr4" },
-    { name: "Apache Configuration", alias: "apacheconf" },
-    { name: "Apex", alias: "apex" },
-    { name: "APL", alias: "apl" },
-    { name: "AppleScript", alias: "applescript" },
-    { name: "AQL", alias: "aql" },
-    { name: "Arduino", alias: "arduino" },
-    { name: "ARFF", alias: "arff" },
-    { name: "ARM Assembly", alias: "armasm" },
-    { name: "Arturo", alias: "arturo" },
-    { name: "AsciiDoc", alias: "asciidoc" },
-    { name: "ASP.NET (C#)", alias: "aspnet" },
-    { name: "6502 Assembly", alias: "asm6502" },
-    { name: "Atmel AVR Assembly", alias: "asmatmel" },
-    { name: "AutoHotkey", alias: "autohotkey" },
-    { name: "AutoIt", alias: "autoit" },
-    { name: "AviSynth", alias: "avisynth" },
-    { name: "Avro IDL", alias: "avro-idl" },
-    { name: "AWK", alias: "awk" },
-    { name: "Bash", alias: "bash" },
-    { name: "BASIC", alias: "basic" },
-    { name: "Batch", alias: "batch" },
-    { name: "BBcode", alias: "bbcode" },
-    { name: "Bicep", alias: "bicep" },
-    { name: "Birb", alias: "birb" },
-    { name: "Bison", alias: "bison" },
-    { name: "BNF", alias: "bnf" },
-    { name: "Brainfuck", alias: "brainfuck" },
-    { name: "BrightScript", alias: "brightscript" },
-    { name: "Bro", alias: "bro" },
-    { name: "BSL (1C:Enterprise)", alias: "bsl" },
-    { name: "C", alias: "c" },
-    { name: "C#", alias: "csharp" },
-    { name: "C++", alias: "cpp" },
-    { name: "CFScript", alias: "cfscript" },
-    { name: "ChaiScript", alias: "chaiscript" },
-    { name: "CIL", alias: "cil" },
-    { name: "Clojure", alias: "clojure" },
-    { name: "CMake", alias: "cmake" },
-    { name: "COBOL", alias: "cobol" },
-    { name: "CoffeeScript", alias: "coffeescript" },
-    { name: "Concurnas", alias: "concurnas" },
-    { name: "Content-Security-Policy", alias: "csp" },
-    { name: "Cooklang", alias: "cooklang" },
-    { name: "Coq", alias: "coq" },
-    { name: "Crystal", alias: "crystal" },
-    { name: "CSS Extras", alias: "css-extras" },
-    { name: "CSV", alias: "csv" },
-    { name: "CUE", alias: "cue" },
-    { name: "Cypher", alias: "cypher" },
-    { name: "D", alias: "d" },
-    { name: "Dart", alias: "dart" },
-    { name: "DataWeave", alias: "dataweave" },
-    { name: "DAX", alias: "dax" },
-    { name: "Dhall", alias: "dhall" },
-    { name: "Diff", alias: "diff" },
-    { name: "Django/Jinja2", alias: "django" },
-    { name: "Docker", alias: "docker" },
-    { name: "DOT (Graphviz)", alias: "dot" },
-    { name: "EBNF", alias: "ebnf" },
-    { name: "EditorConfig", alias: "editorconfig" },
-    { name: "Eiffel", alias: "eiffel" },
-    { name: "EJS", alias: "ejs" },
-    { name: "Elixir", alias: "elixir" },
-    { name: "Elm", alias: "elm" },
-    { name: "ERB", alias: "erb" },
-    { name: "Erlang", alias: "erlang" },
-    { name: "Excel Formula", alias: "excel-formula" },
-    { name: "F#", alias: "fsharp" },
-    { name: "Fortran", alias: "fortran" },
-    { name: "GameMaker Language", alias: "gml" },
-    { name: "G-code", alias: "gcode" },
-    { name: "Go", alias: "go" },
-    { name: "Gradle", alias: "gradle" },
-    { name: "GraphQL", alias: "graphql" },
-    { name: "Groovy", alias: "groovy" },
-    { name: "Haskell", alias: "haskell" },
-    { name: "HLSL", alias: "hlsl" },
-    { name: "HTTP", alias: "http" },
-    { name: "Ini", alias: "ini" },
-    { name: "Java", alias: "java" },
-    { name: "JSON", alias: "json" },
-    { name: "Kotlin", alias: "kotlin" },
-    { name: "LaTeX", alias: "latex" },
-    { name: "Less", alias: "less" },
-    { name: "Lua", alias: "lua" },
-    { name: "Markdown", alias: "markdown" },
-    { name: "MATLAB", alias: "matlab" },
-    { name: "Nginx", alias: "nginx" },
-    { name: "Objective-C", alias: "objectivec" },
-    { name: "Pascal", alias: "pascal" },
-    { name: "Perl", alias: "perl" },
-    { name: "PHP", alias: "php" },
-    { name: "Python", alias: "python" },
-    { name: "R", alias: "r" },
-    { name: "Ruby", alias: "ruby" },
-    { name: "Rust", alias: "rust" },
-    { name: "SQL", alias: "sql" },
-    { name: "Swift", alias: "swift" },
-    { name: "TypeScript", alias: "typescript" },
-    { name: "YAML", alias: "yaml" },
-    { name: "Zig", alias: "zig" }
-];
-const languages = ref([
-    { name: "ABAP", alias: "clike" },
-    { name: "ABNF", alias: "clike" },
-    { name: "ActionScript", alias: "clike" },
-    { name: "Ada", alias: "clike" },
-    { name: "Agda", alias: "clike" },
-    { name: "AL", alias: "clike" },
-    { name: "ANTLR4", alias: "clike" },
-    { name: "Apache Configuration", alias: "clike" },
-    { name: "Apex", alias: "clike" },
-    { name: "APL", alias: "clike" },
-    { name: "AppleScript", alias: "clike" },
-    { name: "AQL", alias: "clike" },
-    { name: "Arduino", alias: "clike" },
-    { name: "ARFF", alias: "clike" },
-    { name: "ARM Assembly", alias: "clike" },
-    { name: "Arturo", alias: "clike" },
-    { name: "AsciiDoc", alias: "clike" },
-    { name: "ASP.NET (C#)", alias: "clike" },
-    { name: "6502 Assembly", alias: "clike" },
-    { name: "Atmel AVR Assembly", alias: "clike" },
-    { name: "AutoHotkey", alias: "clike" },
-    { name: "AutoIt", alias: "clike" },
-    { name: "AviSynth", alias: "clike" },
-    { name: "Avro IDL", alias: "clike" },
-    { name: "AWK", alias: "clike" },
-    { name: "Bash", alias: "clike" },
-    { name: "BASIC", alias: "clike" },
-    { name: "Batch", alias: "clike" },
-    { name: "BBcode", alias: "clike" },
-    { name: "Bicep", alias: "clike" },
-    { name: "Birb", alias: "clike" },
-    { name: "Bison", alias: "clike" },
-    { name: "BNF", alias: "clike" },
-    { name: "Brainfuck", alias: "clike" },
-    { name: "BrightScript", alias: "clike" },
-    { name: "Bro", alias: "clike" },
-    { name: "BSL (1C:Enterprise)", alias: "clike" },
-    { name: "C", alias: "c" },
-    { name: "C#", alias: "csharp" },
-    { name: "C++", alias: "cpp" },
-    { name: "CFScript", alias: "clike" },
-    { name: "ChaiScript", alias: "clike" },
-    { name: "CIL", alias: "clike" },
-    { name: "Clojure", alias: "clike" },
-    { name: "CMake", alias: "clike" },
-    { name: "COBOL", alias: "clike" },
-    { name: "CoffeeScript", alias: "clike" },
-    { name: "Concurnas", alias: "clike" },
-    { name: "Content-Security-Policy", alias: "clike" },
-    { name: "Cooklang", alias: "clike" },
-    { name: "Coq", alias: "clike" },
-    { name: "Crystal", alias: "clike" },
-    { name: "CSS", alias: "css" },
-    { name: "CSS Extras", alias: "css-extras" },
-    { name: "CSV", alias: "clike" },
-    { name: "CUE", alias: "clike" },
-    { name: "Cypher", alias: "clike" },
-    { name: "D", alias: "clike" },
-    { name: "Dart", alias: "clike" },
-    { name: "DataWeave", alias: "clike" },
-    { name: "DAX", alias: "clike" },
-    { name: "Dhall", alias: "clike" },
-    { name: "Diff", alias: "clike" },
-    { name: "Django/Jinja2", alias: "clike" },
-    { name: "Docker", alias: "clike" },
-    { name: "DOT (Graphviz)", alias: "clike" },
-    { name: "EBNF", alias: "clike" },
-    { name: "EditorConfig", alias: "clike" },
-    { name: "Eiffel", alias: "clike" },
-    { name: "EJS", alias: "clike" },
-    { name: "Elixir", alias: "clike" },
-    { name: "Elm", alias: "clike" },
-    { name: "ERB", alias: "clike" },
-    { name: "Erlang", alias: "clike" },
-    { name: "Excel Formula", alias: "clike" },
-    { name: "F#", alias: "clike" },
-    { name: "Fortran", alias: "clike" },
-    { name: "GameMaker Language", alias: "clike" },
-    { name: "G-code", alias: "clike" },
-    { name: "Go", alias: "clike" },
-    { name: "Gradle", alias: "clike" },
-    { name: "GraphQL", alias: "clike" },
-    { name: "Groovy", alias: "clike" },
-    { name: "Haskell", alias: "clike" },
-    { name: "HLSL", alias: "clike" },
-    { name: "HTTP", alias: "clike" },
-    { name: "Ini", alias: "clike" },
-    { name: "Java", alias: "java" },
-    { name: "JavaScript", alias: "javascript" },
-    { name: "JSON", alias: "clike" },
-    { name: "Kotlin", alias: "clike" },
-    { name: "LaTeX", alias: "clike" },
-    { name: "Less", alias: "clike" },
-    { name: "Lua", alias: "clike" },
-    { name: "Markdown", alias: "markdown" },
-    { name: "MATLAB", alias: "clike" },
-    { name: "Nginx", alias: "clike" },
-    { name: "Objective-C", alias: "clike" },
-    { name: "Pascal", alias: "clike" },
-    { name: "Perl", alias: "clike" },
-    { name: "PHP", alias: "clike" },
-    { name: "Python", alias: "clike" },
-    { name: "R", alias: "clike" },
-    { name: "Ruby", alias: "clike" },
-    { name: "Rust", alias: "clike" },
-    { name: "SQL", alias: "clike" },
-    { name: "Swift", alias: "clike" },
-    { name: "TypeScript", alias: "clike" },
-    { name: "YAML", alias: "clike" },
-    { name: "Zig", alias: "clike" }
-]);
-
-
-
-const windowTitle = ref('');
-
-let selectedValue = ref('')
-
-</script>
-
 <template>
-    <div class="flex justify-between items-center bg-gray-800 text-white h-10 w-full">
+    <div class="flex justify-between items-center bg-gray-800 text-white h-12 min-w-96 w-full">
 
 
         <!-- Empty right hand -->
         <div class="text-sm font-medium px-3 flex ">
             >
         </div>
-
         <!-- Centered Title -->
-        <select
-            v-model="selectedValue"
-            @change="$emit('languageSelected', selectedValue)"
-            class="bg-gray-800 border-0 focus:border-0 focus:outline-none focus:ring-0"
-        >
-            <option value="" disabled>Select language</option>
-            <option v-for="language in languages" :value="language.alias">
-                {{ language.name }}
-            </option>
-        </select>
+        <div class="text-sm font-medium px-3 flex ">
+            <p class="h-fit">{{ languageName }}</p>
+        </div>
 
         <!-- Window Controls (Right Side) -->
         <div class="ml-auto flex px-3 justify-between">
             <!-- Minimize Button -->
             <button class="mx-2 p-1 hover:bg-gray-700 rounded" title="Minimize">
-                <Minus size="16" />
+                <Minus size="16"/>
             </button>
             <!-- Maximize Button -->
             <button class="mx-2 p-1 hover:bg-gray-700 rounded" title="Maximize">
-                <Square size="16" />
+                <Square size="16"/>
             </button>
             <!-- Close Button -->
             <button class="mx-2 p-1 hover:bg-red-700 bg-red-600 rounded" title="Close">
-                <X size="16" />
+                <X size="16"/>
             </button>
         </div>
 
     </div>
 </template>
+<script setup>
+import {X, Square, Minus} from 'lucide-vue-next';
+
+
+let props = defineProps({
+    languageName: String,
+})
+
+</script>

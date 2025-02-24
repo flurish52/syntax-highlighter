@@ -1,30 +1,34 @@
 <template>
-    <div class="relative py-4 p-4 bg-gray-900 h-screen">
-
-        <div class="w-3xl md:flex md:w-screen mx-auto  rounded-lg shadow-lg justify-center items-start item-start">
+    <div
+        class="flex flex-col items-start justify-start max-w-screen md:flw-row relative py-4 p-4 bg-gray-900 h-screen overflow-x-hidden">
+        <div
+            class=" flex flex-col w-3xl md:flex-row md:w-screen  rounded-lg shadow-lg h-screen">
             <!-- Input Area -->
             <textarea
                 v-model="code"
                 placeholder="Paste your code here..."
-                class="w-1/3  h-screen p-3 text-white bg-gray-800 border border-gray-700 rounded-lg font-mono focus:outline-none"
+                class="w-96 pt-8 h-1/2 py-12 md:h-screen p-3 text-white bg-gray-800 border border-gray-700 rounded-lg font-mono focus:outline-none"
             ></textarea>
 
             <!-- Code Preview with Highlighting -->
+            <div class="w-fit">
+                <SelectLanguage
+                    @languageChanged="handleLanguageSelection"
+                />
                 <pre
                     ref="codeContainer"
-                    class="rounded-lg w-full h-full ml-2 flex flex-col bg-gray-900">
+                    class="rounded-lg w-full h-screen md:h-fit ml-2 flex flex-col bg-gray-900 px-6 pt-6">
                     <TitleBar
-                     @languageSelected="handleLanguageSelection"
+                        :languageName="languageName"
                     />
-                    <code :class="[language, 'w-fit p-3 bg-gray-900']"
+                <code :class="[language, 'max-w-6xl w-fit bg-gray-900 py-12 h-full h-fit bg-red-600']"
                       v-html="Prism.highlight(code, Prism.languages.css, codelang)"></code>
-                </pre>
-
+            </pre>
+            </div>
         </div>
-
         <div
 
-            class="flex gap-4 fixed top-2 right-1/3 ">
+            class="flex  fixed top-2 right-0 md:right-1/3 w-full justify-between md:justify-end">
             <!-- Reset Button -->
             <button
                 class="px-6 py-2 rounded-lg bg-red-500 text-white font-semibold shadow-md hover:bg-red-600 transition"
@@ -48,13 +52,14 @@ import TitleBar from "@/Components/TitleBar.vue";
 import {ref, watch, onMounted} from 'vue';
 import Prism from 'prismjs';
 import html2canvas from "html2canvas";
+import SelectLanguage from "@/Components/SelectLanguage.vue";
 
 const code = ref('');
 let codeContainer = ref('');
 
 let codelang = ref('')
-let language = ref('language-'+codelang)
-let valueSelected  = ref();
+let language = ref('language-' + codelang)
+let valueSelected = ref();
 
 
 let prism = ref(Prism.languages.css)
@@ -64,17 +69,18 @@ const updateHighlight = () => {
     }, 100);
 };
 
-const handleLanguageSelection = (selectedValue) => {
-    language.value = 'language-'+selectedValue;
-    codelang.value = selectedValue;
-    valueSelected.value = selectedValue;
-    console.log(selectedValue)
+let languageName = ref('')
 
-    prism.value = 'Prism.languages.'+codelang.value
+const handleLanguageSelection = (selectedValue) => {
+    language.value = 'language-' + selectedValue.alias;
+    codelang.value = selectedValue.alias
+    valueSelected.value = selectedValue.alias;
+    prism.value = 'Prism.languages.' + codelang.value
+    languageName.value = selectedValue.name
     updateHighlight()
 };
 const saveAsImage = () => {
-    if (code.value !== '' && valueSelected.value !== '' ) {
+    if (code.value !== '' && valueSelected.value !== '') {
         html2canvas(codeContainer.value, {backgroundColor: null}).then((canvas) => {
             const link = document.createElement("a");
             link.href = canvas.toDataURL("image/png");
